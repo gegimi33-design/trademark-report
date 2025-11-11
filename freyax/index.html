@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>FreyaX 상표 지정상품 구조 리포트</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: #111827;
+      --card: #0f172a;
+      --card-soft: #020617;
+      --accent: #38bdf8;
+      --accent-soft: #0ea5e9;
+      --accent-2: #22c55e;
+      --danger: #f97316;
+      --text-main: #e5e7eb;
+      --text-sub: #9ca3af;
+      --border: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px 16px 40px;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: radial-gradient(circle at top, #0b1220 0, #020617 55%, #020617 100%);
+      color: var(--text-main);
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-sub);
+      max-width: 640px;
+      line-height: 1.5;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.9));
+      font-size: 11px;
+      color: var(--text-main);
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    /* 상단 요약 카드 */
+    .grid-top {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      border-radius: 18px;
+      padding: 16px 18px;
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), rgba(15, 23, 42, 1));
+      border: 1px solid rgba(15, 118, 210, 0.45);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.6);
+    }
+
+    .card.secondary {
+      background: radial-gradient(circle at top left, rgba(45, 212, 191, 0.12), rgba(15, 23, 42, 1));
+      border-color: rgba(16, 185, 129, 0.45);
+    }
+
+    .card.warn {
+      background: radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), rgba(15, 23, 42, 1));
+      border-color: rgba(249, 115, 22, 0.55);
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-main {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.8);
+      font-size: 10px;
+      color: var(--accent);
+      border: 1px solid rgba(37, 99, 235, 0.7);
+      white-space: nowrap;
+    }
+
+    .badge span {
+      font-size: 13px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+    }
+
+    .badge-42 {
+      color: var(--accent-2);
+      border-color: rgba(16, 185, 129, 0.7);
+    }
+
+    .badge-44 {
+      color: var(--danger);
+      border-color: rgba(248, 113, 22, 0.7);
+    }
+
+    /* 메인 레이아웃 */
+    .main-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.7fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 980px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), #020617);
+      border-radius: 18px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 16px 18px 18px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .panel-caption {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .tag-strong {
+      border-color: rgba(56, 189, 248, 0.8);
+      color: var(--accent);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), rgba(15, 23, 42, 0.9));
+      font-weight: 500;
+    }
+
+    .note {
+      font-size: 11px;
+      color: var(--text-sub);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .note strong {
+      color: #e5e7eb;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-top: 4px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    thead {
+      background: linear-gradient(90deg, rgba(30, 64, 175, 0.9), rgba(8, 47, 73, 0.9));
+    }
+
+    th,
+    td {
+      padding: 7px 9px;
+      text-align: left;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.85);
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 10px;
+      font-weight: 600;
+      color: #e5e7eb;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    tbody tr {
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    tbody tr:nth-child(2n) {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    tbody tr:hover {
+      background: rgba(30, 64, 175, 0.28);
+    }
+
+    .col-no {
+      width: 40px;
+      color: var(--text-sub);
+    }
+
+    .col-ko {
+      width: 40%;
+    }
+
+    .col-en {
+      width: 35%;
+      color: var(--text-sub);
+    }
+
+    .col-role {
+      width: 25%;
+      color: var(--text-sub);
+    }
+
+    .highlight {
+      color: var(--accent-soft);
+      font-weight: 500;
+    }
+
+    .bullet {
+      margin: 0;
+      padding-left: 16px;
+      list-style: disc;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .bullet li + li {
+      margin-top: 2px;
+    }
+
+    .section-spacer {
+      height: 14px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 10px;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-top: 1px dashed rgba(55, 65, 81, 0.9);
+      padding-top: 10px;
+    }
+
+    .footer strong {
+      color: #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="eyebrow">FREYAX · TRADEMARK CLASS ANALYSIS</div>
+      <h1>상표 지정상품 구조 리포트 (9류 · 42류 · 44류)</h1>
+      <div class="subtitle">
+        FreyaX 브랜드를 기준으로, 디바이스·소프트웨어·웰니스 서비스까지 보호 범위를 일관되게 가져가기 위한
+        <strong>제 9류 / 제 42류 / 제 44류 대표 지정상품</strong> 구조를 정리한 보고서입니다.
+      </div>
+      <div class="header-meta">
+        <span>Brand: <strong>FreyaX</strong></span>
+        <span>Scope: Wearable · Fertility · Wellness</span>
+        <span>Coverage: Device → Data Platform → Coaching Service</span>
+      </div>
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>등록 전략용 내부 참고 자료</span>
+      </div>
+    </header>
+
+    <!-- TOP SUMMARY CARDS -->
+    <section class="grid-top">
+      <div class="card">
+        <div class="card-title">
+          출원 구조 요약
+          <span class="badge">
+            <span class="badge-dot"></span>
+            2 Marks / 3 Classes
+          </span>
+        </div>
+        <div class="card-main">2개 상표 · 3개 상품류</div>
+        <div class="card-sub">
+          FreyaX(고정 출원) + 후보 1개<br />
+          제 9류 · 제 42류 · 제 44류를 모두 포함해
+          <span class="highlight">디바이스 → 소프트웨어 → 웰니스 서비스</span>까지 한 번에 보호.
+        </div>
+      </div>
+
+      <div class="card secondary">
+        <div class="card-title">
+          류별 역할
+          <span class="badge badge-42">
+            <span class="badge-dot"></span>
+            Class Role
+          </span>
+        </div>
+        <div class="card-main">“레이어별 보호”</div>
+        <div class="card-sub">
+          · <strong>9류</strong> : FreyaX 앱·스마트밴드·센서 디바이스<br />
+          · <strong>42류</strong> : 데이터 분석·AI·플랫폼(SaaS)<br />
+          · <strong>44류</strong> : 임신 준비·생활습관 코칭, 비의료적 웰니스 서비스
+        </div>
+      </div>
+
+      <div class="card warn">
+        <div class="card-title">
+          전략 포인트
+          <span class="badge badge-44">
+            <span class="badge-dot"></span>
+            Non-medical Positioning
+          </span>
+        </div>
+        <div class="card-main">“의료행위는 피하고, 웰니스에 고정”</div>
+        <div class="card-sub">
+          44류에서는 <strong>비의료 목적의 건강·웰니스 관리</strong>에 초점을 두고, “진단·치료” 표현은 피하는 방향으로
+          지정상품을 구성해 DTx·의료기기 구간과의 충돌 리스크를 낮춥니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN LAYOUT -->
+    <section class="main-layout">
+      <!-- LEFT: STRATEGY PANEL -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">1. 지정상품 전략 개요</div>
+            <div class="panel-caption">FreyaX 서비스 스펙을 반영한 레이어별 보호 범위</div>
+          </div>
+        </div>
+
+        <div class="tag-row">
+          <span class="tag tag-strong">제 9류: 앱 · 스마트밴드 · 센서 디바이스</span>
+          <span class="tag tag-strong">제 42류: 데이터 분석 · SaaS · 알고리즘</span>
+          <span class="tag tag-strong">제 44류: 가임력·수면·웰니스 코칭</span>
+          <span class="tag">Wearable 기반 헬스 데이터 수집</span>
+          <span class="tag">생리·배란일 예측 로직 포함</span>
+          <span class="tag">비의료 목적 건강관리 서비스</span>
+        </div>
+
+        <p class="note">
+          · <strong>제 9류</strong>에서는 FreyaX <strong>앱과 스마트밴드</strong>를 “다운로드 가능한 소프트웨어 + 전자식 착용형 기기”로 확실하게
+          잡아, 하드웨어·앱 자체를 직접 보호합니다.<br />
+          · <strong>제 42류</strong>에서는 “<strong>온라인 비다운로드 소프트웨어 / SaaS / 데이터 분석 플랫폼</strong>” 구조로 정의해,
+          배란 예측·패턴 분석 알고리즘과 데이터 인프라를 커버합니다.<br />
+          · <strong>제 44류</strong>에서는 “<strong>임신 준비·생활습관 관리·웰니스 코칭</strong>” 관점에서 표현하되,
+          <strong>진단·치료·처방</strong> 등 의료행위로 해석될 수 있는 표현은 의도적으로 피하는 것이 핵심입니다.
+        </p>
+
+        <div class="section-spacer"></div>
+
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">2. 류별 핵심 메시지</div>
+            <div class="panel-caption">보고서 장표 상단에 들어갈 한 줄 요약</div>
+          </div>
+        </div>
+
+        <ul class="bullet">
+          <li><strong>제 9류</strong> – “FreyaX 스마트밴드와 모바일 앱, 그리고 이들이 수집하는 건강 데이터를 다루는
+            <span class="highlight">디바이스·다운로드 소프트웨어 레이어</span>를 보호한다.”</li>
+          <li><strong>제 42류</strong> – “생리·배란일 예측, 수면·활동 패턴 분석 알고리즘을 제공하는
+            <span class="highlight">클라우드 기반 데이터·AI 플랫폼 레이어</span>를 보호한다.”</li>
+          <li><strong>제 44류</strong> – “임신 준비 중 사용자를 대상으로 한
+            <span class="highlight">생활습관·컨디션 코칭 중심의 비의료 웰니스 서비스 레이어</span>를 보호한다.”</li>
+        </ul>
+      </div>
+
+      <!-- RIGHT: TABLES PANEL -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">3. FreyaX 대표 지정상품 목록</div>
+            <div class="panel-caption">제 9류 · 제 42류 · 제 44류별 주요 지정상품 예시</div>
+          </div>
+        </div>
+
+        <!-- CLASS 9 -->
+        <table>
+          <thead>
+            <tr>
+              <th class="col-no">No</th>
+              <th class="col-ko">제 9류 대표 지정상품 (국문)</th>
+              <th class="col-en">영문 참고 표기</th>
+              <th class="col-role">FreyaX에서의 역할</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-no">9-1</td>
+              <td class="col-ko"><strong>생리 주기 및 배란일 관리용 모바일 애플리케이션(다운로드 가능 소프트웨어)</strong></td>
+              <td class="col-en">Downloadable mobile application for menstrual cycle and ovulation tracking</td>
+              <td class="col-role">FreyaX 앱 자체 (핵심 지정상품)</td>
+            </tr>
+            <tr>
+              <td>9-2</td>
+              <td><strong>수면·스트레스·활동량 측정을 위한 웨어러블 스마트밴드</strong></td>
+              <td>Wearable smart band for monitoring sleep, stress and activity</td>
+              <td>FreyaX 스마트밴드 하드웨어 보호</td>
+            </tr>
+            <tr>
+              <td>9-3</td>
+              <td>심박수·피부온도·활동량 측정을 위한 전자식 착용형 기기</td>
+              <td>Electronic wearable devices for monitoring heart rate, skin temperature and activity</td>
+              <td>센서 통합 디바이스 전반을 포괄</td>
+            </tr>
+            <tr>
+              <td>9-4</td>
+              <td>가임력 보호를 위한 야간 조도·색온도 측정용 전자 센서 기기</td>
+              <td>Electronic sensor devices for measuring ambient light and colour temperature for fertility protection</td>
+              <td>야간 빛 공해·수면 환경 센서와 연계</td>
+            </tr>
+            <tr>
+              <td>9-5</td>
+              <td>건강 데이터 수집·시각화를 위한 웨어러블 기기용 컴퓨터 응용 소프트웨어</td>
+              <td>Computer application software for collecting and visualising health data from wearable devices</td>
+              <td>밴드 ↔ 앱 데이터 연동 소프트웨어</td>
+            </tr>
+            <tr>
+              <td>9-6</td>
+              <td>블루투스 통신 기능을 갖춘 건강 모니터링용 스마트 디바이스</td>
+              <td>Smart devices with Bluetooth communication for health monitoring</td>
+              <td>향후 추가 디바이스 라인업까지 여지 확보</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="section-spacer"></div>
+
+        <!-- CLASS 42 -->
+        <table>
+          <thead>
+            <tr>
+              <th class="col-no">No</th>
+              <th class="col-ko">제 42류 대표 지정서비스 (국문)</th>
+              <th class="col-en">영문 참고 표기</th>
+              <th class="col-role">FreyaX에서의 역할</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-no">42-1</td>
+              <td class="col-ko"><strong>생리 주기 및 배란일 예측을 위한 온라인 비다운로드 소프트웨어 제공업</strong></td>
+              <td class="col-en">Providing online non-downloadable software for menstrual cycle and ovulation prediction</td>
+              <td class="col-role">배란 예측 알고리즘 · 서버 사이드 로직</td>
+            </tr>
+            <tr>
+              <td>42-2</td>
+              <td><strong>개인 건강 데이터 분석용 소프트웨어 as a service(SaaS) 제공업</strong></td>
+              <td>Software as a service (SaaS) for analysing personal health data</td>
+              <td>클라우드 기반 FreyaX 분석 엔진</td>
+            </tr>
+            <tr>
+              <td>42-3</td>
+              <td>웨어러블 기기에서 수집된 생체 신호 데이터의 수집·저장·분석 플랫폼 제공업</td>
+              <td>Providing platforms for collection, storage and analysis of biometric data from wearable devices</td>
+              <td>데이터 파이프라인·플랫폼 레이어</td>
+            </tr>
+            <tr>
+              <td>42-4</td>
+              <td>사용자 맞춤형 웰니스 코칭 알고리즘의 설계·개발 및 유지보수 서비스</td>
+              <td>Design, development and maintenance of personalised wellness coaching algorithms</td>
+              <td>맞춤 코칭 로직·추천 엔진 보호</td>
+            </tr>
+            <tr>
+              <td>42-5</td>
+              <td>건강·생활습관 데이터를 이용한 인공지능 기반 패턴 분석 서비스(의료 진단 제외)</td>
+              <td>AI-based pattern analysis of health and lifestyle data, excluding medical diagnosis</td>
+              <td>AI 분석 기능을 비의료 영역에서 포지셔닝</td>
+            </tr>
+            <tr>
+              <td>42-6</td>
+              <td>모바일 애플리케이션 및 서버 간 데이터 연동을 위한 API·플랫폼 제공 서비스</td>
+              <td>Providing APIs and platforms for data integration between mobile applications and servers</td>
+              <td>타 서비스 연동·B2B 협업 대비</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="section-spacer"></div>
+
+        <!-- CLASS 44 -->
+        <table>
+          <thead>
+            <tr>
+              <th class="col-no">No</th>
+              <th class="col-ko">제 44류 대표 지정서비스 (국문)</th>
+              <th class="col-en">영문 참고 표기</th>
+              <th class="col-role">FreyaX에서의 역할</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-no">44-1</td>
+              <td class="col-ko"><strong>임신 준비 및 가임력 관리에 관한 건강·웰니스 정보 제공 서비스(의료 진단 제외)</strong></td>
+              <td class="col-en">Providing health and wellness information in the field of fertility and preconception care, excluding medical diagnosis</td>
+              <td class="col-role">FreyaX 핵심 포지션을 정의하는 대표 지정서비스</td>
+            </tr>
+            <tr>
+              <td>44-2</td>
+              <td><strong>생리 주기·배란 주기에 기반한 생활습관 관리 및 컨디션 코칭 서비스</strong></td>
+              <td>Lifestyle management and condition coaching based on menstrual and ovulation cycles</td>
+              <td>배란·가임기 기반 라이프스타일 코칭</td>
+            </tr>
+            <tr>
+              <td>44-3</td>
+              <td>수면·스트레스·활동량 데이터를 활용한 생활습관 개선 가이드 제공 서비스</td>
+              <td>Providing lifestyle improvement guidance using sleep, stress and activity data</td>
+              <td>멀티 웰니스 확장 (수면·스트레스 포함)</td>
+            </tr>
+            <tr>
+              <td>44-4</td>
+              <td>모바일 애플리케이션을 통한 비의료적 건강관리·웰니스 코칭 서비스</td>
+              <td>Non-medical health management and wellness coaching services provided via mobile applications</td>
+              <td>“비의료 목적”을 명시해 리스크 완화</td>
+            </tr>
+            <tr>
+              <td>44-5</td>
+              <td>임신 준비 중인 사용자를 위한 식이·운동·생활습관 관리 상담 서비스</td>
+              <td>Counselling services in the field of diet, exercise and lifestyle management for individuals preparing for pregnancy</td>
+              <td>컨텐츠·코칭 확장(식이·운동) 여지 확보</td>
+            </tr>
+            <tr>
+              <td>44-6</td>
+              <td>온라인을 통한 여성 건강 및 웰니스 관련 정보 제공 서비스</td>
+              <td>Providing online information in the field of women's health and wellness</td>
+              <td>장기적으로 여성 건강 플랫폼으로 확장 가능한 표현</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>
+        <strong>Note.</strong> 본 리포트의 지정상품 예시는 FreyaX 서비스 콘셉트에 맞춰 기획 관점에서 구성한 초안으로,
+        실제 출원 시에는 특허법인 검토 및 고시명칭 확인이 필요합니다.
+      </div>
+      <div>
+        <strong>Usage.</strong> GitHub Pages에 업로드 후 Notion에 Embed하여, 상표 전략 회의·내부 보고용 장표로 재사용 가능합니다.
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
