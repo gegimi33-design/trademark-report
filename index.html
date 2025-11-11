@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상표 출원 등록 의사결정 보고서</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .animate-pulse-soft {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .card {
+            transition: all 0.5s ease;
+        }
+        
+        .card:hover {
+            transform: scale(1.05);
+        }
+        
+        .gauge-circle {
+            transition: stroke-dashoffset 1s ease-out;
+        }
+        
+        .details {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .details.active {
+            max-height: 400px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-16 animate-fadeIn">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-6xl font-bold text-white mb-2">상표 출원 등록</h1>
+                    <div class="h-2 bg-gradient-to-r from-lime-400 via-lime-500 to-transparent w-96 rounded-full"></div>
+                </div>
+                <div class="text-right">
+                    <div class="text-white text-lg font-semibold">Aimnext</div>
+                    <div class="text-lime-400 text-sm">Trademark Analysis Report</div>
+                </div>
+            </div>
+            <h2 class="text-4xl font-bold text-white mt-8">의사결정 보고서</h2>
+        </div>
+
+        <!-- Interactive Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16" id="cards-container"></div>
+
+        <!-- Comparison Chart -->
+        <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-12 border-2 border-slate-700">
+            <h3 class="text-3xl font-bold text-white mb-8">상세 등록 가능성 분석</h3>
+            <div class="space-y-6" id="chart-container"></div>
+        </div>
+
+        <!-- Recommendation -->
+        <div class="grid grid-cols-1 gap-6">
+            <div class="relative bg-gradient-to-br from-lime-400 via-lime-500 to-lime-600 rounded-2xl shadow-2xl p-10 text-black overflow-hidden">
+                <div class="absolute inset-0 shimmer"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-3xl font-bold">최종 추천</h3>
+                        <div class="text-6xl">🏆</div>
+                    </div>
+                    <div class="text-7xl font-black mb-6 tracking-tight">Chanda</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                        <div class="bg-black/10 backdrop-blur-sm rounded-xl p-4">
+                            <div class="text-3xl font-bold mb-2">87%</div>
+                            <div class="font-semibold">등록 가능성</div>
+                        </div>
+                        <div class="bg-black/10 backdrop-blur-sm rounded-xl p-4">
+                            <div class="text-3xl font-bold mb-2">3/3</div>
+                            <div class="font-semibold">모든 구분 통과</div>
+                        </div>
+                        <div class="bg-black/10 backdrop-blur-sm rounded-xl p-4">
+                            <div class="text-3xl font-bold mb-2">낮음</div>
+                            <div class="font-semibold">리스크 수준</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="mt-6 bg-red-500/10 border-l-4 border-red-500 p-6 rounded-xl backdrop-blur-sm">
+            <div class="flex items-start">
+                <div class="text-red-400 font-bold text-3xl mr-4">⚠</div>
+                <div>
+                    <div class="font-bold text-red-400 text-xl mb-2">주의사항</div>
+                    <div class="text-gray-300">
+                        Wearlove는 09류에서 동일유사 상표가 존재하여 등록 가능성이 25%로 낮습니다. 
+                        출원 시 거절될 위험이 높으므로 선택을 권장하지 않습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const trademarks = [
+            {
+                name: 'Wearlove',
+                score: 25,
+                risk: '높음',
+                riskColor: 'from-red-500 to-red-600',
+                ringColor: 'ring-red-500',
+                glowColor: 'shadow-red-500/50',
+                gaugeColor: '#ef4444',
+                status: {
+                    rule09: { text: '낮음 (동일유사 상표 존재)', score: 20 },
+                    rule42: { text: '보통 (등록 가능성 약 60%)', score: 60 },
+                    rule44: { text: '높음', score: 90 },
+                },
+                summary: '09류 충돌로 인해 전반적 등록 난이도 높음',
+                recommended: false,
+                details: [
+                    '동일유사 상표 존재로 거절 가능성 높음',
+                    '출원 비용 대비 리스크 과다',
+                    '법적 분쟁 가능성 존재'
+                ]
+            },
+            {
+                name: 'NEXFIT',
+                score: 65,
+                risk: '보통',
+                riskColor: 'from-yellow-500 to-amber-600',
+                ringColor: 'ring-yellow-500',
+                glowColor: 'shadow-yellow-500/50',
+                gaugeColor: '#eab308',
+                status: {
+                    rule09: { text: '보통 (등록 가능성 약 70%)', score: 70 },
+                    rule42: { text: '높음', score: 90 },
+                    rule44: { text: '높음', score: 90 },
+                },
+                summary: '전반적으로 등록 가능성 양호',
+                recommended: false,
+                details: [
+                    '09류에서 일부 유사 상표 존재',
+                    '등록 가능성 중간 수준',
+                    '안정적이지만 최선은 아님'
+                ]
+            },
+            {
+                name: 'Flofit',
+                score: 70,
+                risk: '보통',
+                riskColor: 'from-yellow-500 to-amber-600',
+                ringColor: 'ring-yellow-500',
+                glowColor: 'shadow-yellow-500/50',
+                gaugeColor: '#eab308',
+                status: {
+                    rule09: { text: '보통 (등록 가능성 약 70%)', score: 70 },
+                    rule42: { text: '높음', score: 90 },
+                    rule44: { text: '높음', score: 90 },
+                },
+                summary: '등록 가능성 양호',
+                recommended: false,
+                details: [
+                    'NEXFIT과 유사한 등록 가능성',
+                    '무난한 선택지',
+                    '특별한 장단점 없음'
+                ]
+            },
+            {
+                name: 'Chanda',
+                score: 87,
+                risk: '낮음',
+                riskColor: 'from-lime-400 to-lime-500',
+                ringColor: 'ring-lime-400',
+                glowColor: 'shadow-lime-500/50',
+                gaugeColor: '#a3e635',
+                status: {
+                    rule09: { text: '높음', score: 95 },
+                    rule42: { text: '높음', score: 90 },
+                    rule44: { text: '높음', score: 90 },
+                },
+                summary: '등록 가능성 매우 높음',
+                recommended: true,
+                details: [
+                    '모든 구분에서 충돌 없음',
+                    '안정적인 등록 가능성',
+                    '최적의 선택'
+                ]
+            }
+        ];
+
+        let selectedCard = null;
+        let hoveredCard = null;
+
+        function createCards() {
+            const container = document.getElementById('cards-container');
+            
+            trademarks.forEach((tm, idx) => {
+                const circumference = 2 * Math.PI * 70;
+                const offset = circumference * (1 - tm.score / 100);
+                
+                const card = document.createElement('div');
+                card.className = `card relative bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-6 cursor-pointer border-2 border-slate-700 ${tm.recommended ? 'ring-4 ring-lime-400' : ''}`;
+                card.innerHTML = `
+                    ${tm.recommended ? '<div class="absolute -top-3 -right-3 bg-gradient-to-r from-lime-400 to-lime-500 text-black text-xs font-bold px-4 py-2 rounded-full shadow-lg animate-pulse-soft">⭐ 추천</div>' : ''}
+                    
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold mb-2 text-white card-title">${tm.name}</h3>
+                    </div>
+                    
+                    <div class="relative w-40 h-40 mx-auto mb-6">
+                        <svg class="transform -rotate-90 w-40 h-40">
+                            <circle cx="80" cy="80" r="70" stroke="rgba(255,255,255,0.1)" stroke-width="14" fill="transparent"/>
+                            <circle class="gauge-circle" cx="80" cy="80" r="70" stroke="${tm.gaugeColor}" stroke-width="14" fill="transparent" 
+                                stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" stroke-linecap="round"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-5xl font-bold text-white card-score">${tm.score}%</span>
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <div class="text-sm font-semibold text-gray-300 mb-3">등록 가능성</div>
+                        <div class="inline-block px-4 py-2 rounded-full text-white text-sm font-bold bg-gradient-to-r ${tm.riskColor} shadow-lg">
+                            리스크: ${tm.risk}
+                        </div>
+                    </div>
+
+                    <div class="details">
+                        <div class="border-t border-slate-700 pt-4 space-y-2">
+                            ${tm.details.map(detail => `
+                                <div class="flex items-start text-xs text-gray-300">
+                                    <span class="w-1.5 h-1.5 bg-lime-400 rounded-full mr-2 mt-1.5 flex-shrink-0"></span>
+                                    <span>${detail}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('mouseenter', () => {
+                    hoveredCard = idx;
+                    card.classList.add(tm.ringColor, tm.glowColor, 'border-opacity-100');
+                    card.querySelector('.card-title').classList.add('text-lime-400', 'scale-110');
+                    card.querySelector('.card-score').classList.add('scale-125', 'text-lime-400');
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    hoveredCard = null;
+                    card.classList.remove(tm.ringColor, tm.glowColor, 'border-opacity-100');
+                    card.querySelector('.card-title').classList.remove('text-lime-400', 'scale-110');
+                    card.querySelector('.card-score').classList.remove('scale-125', 'text-lime-400');
+                });
+                
+                card.addEventListener('click', () => {
+                    const details = card.querySelector('.details');
+                    if (selectedCard === idx) {
+                        details.classList.remove('active');
+                        selectedCard = null;
+                    } else {
+                        document.querySelectorAll('.details').forEach(d => d.classList.remove('active'));
+                        details.classList.add('active');
+                        selectedCard = idx;
+                    }
+                });
+                
+                container.appendChild(card);
+                
+                setTimeout(() => {
+                    const circle = card.querySelector('.gauge-circle');
+                    circle.style.strokeDashoffset = offset;
+                }, 100 + idx * 200);
+            });
+        }
+
+        function createChart() {
+            const container = document.getElementById('chart-container');
+            
+            trademarks.forEach((tm, idx) => {
+                const chart = document.createElement('div');
+                chart.className = 'transition-all duration-300';
+                chart.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-lg font-bold text-white chart-name">${tm.name}</span>
+                        <span class="text-sm text-gray-400">${tm.summary}</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        ${Object.entries(tm.status).map(([key, value]) => `
+                            <div class="space-y-2">
+                                <div class="text-xs text-gray-400 font-semibold">${key.toUpperCase()}</div>
+                                <div class="h-3 bg-slate-700/50 rounded-full overflow-hidden">
+                                    <div class="bar h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r ${
+                                        value.score >= 80 ? 'from-lime-400 to-lime-500' :
+                                        value.score >= 60 ? 'from-yellow-400 to-amber-500' :
+                                        'from-red-400 to-red-500'
+                                    }" style="width: 0%"></div>
+                                </div>
+                                <div class="text-xs text-gray-300">${value.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                chart.addEventListener('mouseenter', () => {
+                    chart.classList.add('scale-105');
+                    chart.querySelector('.chart-name').classList.add('text-lime-400');
+                });
+                
+                chart.addEventListener('mouseleave', () => {
+                    chart.classList.remove('scale-105');
+                    chart.querySelector('.chart-name').classList.remove('text-lime-400');
+                });
+                
+                container.appendChild(chart);
+                
+                setTimeout(() => {
+                    const bars = chart.querySelectorAll('.bar');
+                    Object.values(tm.status).forEach((value, i) => {
+                        setTimeout(() => {
+                            bars[i].style.width = value.score + '%';
+                        }, i * 50);
+                    });
+                }, 300 + idx * 100);
+            });
+        }
+
+        createCards();
+        createChart();
+    </script>
+</body>
+</html>
