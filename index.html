@@ -98,7 +98,7 @@
                 <div class="absolute inset-0 shimmer"></div>
                 <div class="relative z-10">
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-3xl font-bold">최종 추천</h3>
+                        <h3 class="text-3xl font-bold">대표님 최종 결정</h3>
                         <div class="text-6xl">🏆</div>
                     </div>
                     <div class="text-7xl font-black mb-6 tracking-tight">Chanda</div>
@@ -236,7 +236,7 @@
                 const card = document.createElement('div');
                 card.className = `card relative bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-6 cursor-pointer border-2 border-slate-700 ${tm.recommended ? 'ring-4 ring-lime-400' : ''}`;
                 card.innerHTML = `
-                    ${tm.recommended ? '<div class="absolute -top-3 -right-3 bg-gradient-to-r from-lime-400 to-lime-500 text-black text-xs font-bold px-4 py-2 rounded-full shadow-lg animate-pulse-soft">⭐ 추천</div>' : ''}
+                    ${tm.recommended ? '<div class="absolute -top-3 -right-3 bg-gradient-to-r from-lime-400 to-lime-500 text-black text-xs font-bold px-4 py-2 rounded-full shadow-lg animate-pulse-soft">⭐대표님 픽</div>' : ''}
                     
                     <div class="text-center mb-6">
                         <h3 class="text-2xl font-bold mb-2 text-white card-title">${tm.name}</h3>
